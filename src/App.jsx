@@ -1,8 +1,16 @@
 import Form from "./components/Form";
 import FilterButton from "./components/FilterButton";
 import Todo from "./components/Todo";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { nanoid } from 'nanoid';
+
+function usePrevious(value) {
+  const ref = useRef(null);
+  useEffect(() => {
+    ref.current = value;
+  });
+  return ref.current;
+}
 
 const FILTER_MAP = {
   All: () => true,
@@ -25,6 +33,7 @@ function App(props) {
   const [tasks, setTasks] = useState(props.tasks);
   const [filter, setFilter] = useState(props.filter);
 
+
   function toggleTaskCompleted(id) {
     const updatedTasks = tasks.map((task) => {
       if (id === task.id) {
@@ -41,7 +50,7 @@ function App(props) {
   }
 
   const taskList = tasks
-    .filter(FILTER_MAP[filter] || (() => true))
+    ?.filter(FILTER_MAP[filter] || (() => true))
     .map((task) => (
       <Todo
         id={task.id}
@@ -53,8 +62,6 @@ function App(props) {
         editTask={editTask}
       />
     ));
-  const tasksNoun = taskList.length !== 1 ? "tasks" : "task";
-  const headingText = `${taskList.length} ${tasksNoun} remaining`;
 
 
   const filterList = FILTER_NAMES.map((name) => (
@@ -73,6 +80,12 @@ function App(props) {
     }
   }
 
+  const tasksNoun = taskList.length !== 1 ? "tasks" : "task";
+  const headingText = `${taskList.length} ${tasksNoun} remaining`;
+
+  const listHeadingRef = useRef(null);
+  const prevTaskLength = usePrevious(tasks.length);
+
   function editTask(id, newName) {
     const editedTaskList = tasks.map((task) => {
       if (id === task.id) {
@@ -82,6 +95,12 @@ function App(props) {
     });
     setTasks(editedTaskList);
   }
+  
+  useEffect(() => {
+    if (tasks.length < prevTaskLength) {
+      listHeadingRef.current.focus();
+    }
+  }, [tasks.length, prevTaskLength]);
 
 
   return (
@@ -91,7 +110,7 @@ function App(props) {
       <div className="filters btn-group stack-exception">
         {filterList}
       </div>
-      <h2 id="list-heading">{headingText}</h2>
+      <h2 id="list-heading" tabIndex="-1" ref={listHeadingRef}>{headingText}</h2>
 
       <ul
         role="list"
