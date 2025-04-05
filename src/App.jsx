@@ -139,8 +139,6 @@ function App(props) {
     }
   }
 
-  console.log("tasks => ", tasks);
-
   const tasksNoun = taskList.length !== 1 ? "tasks" : "task";
   const headingText = `${taskList.length} ${tasksNoun} remaining`;
 
@@ -156,13 +154,16 @@ function App(props) {
    */
 
   function editTask(id, newName) {
-    const editedTaskList = tasks.map((task) => {
-      if (id === task.id) {
-        return { ...task, name: newName };
-      }
-      return task;
-    });
-    setTasks(editedTaskList);
+    const task = tasks.find((task) => task.id === id);
+    const updatedTasks = { ...task, name: newName };
+
+    axios
+      .put(`http://localhost:5000/tasks/${id}`, updatedTasks)
+      .then(() => setTasks(tasks.map((task) => task.id === id ? updatedTasks : task))
+      )
+      .catch((err) => {
+        console.log(err)
+      })
   }
 
   useEffect(() => {

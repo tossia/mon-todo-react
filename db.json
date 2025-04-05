@@ -2,8 +2,9 @@
   "tasks": [
     {
       "id": "2",
-      "name": "Sleep",
-      "completed": true
+      "name": "Sleep weel",
+      "completed": true,
+      "newName": "Sleep well "
     },
     {
       "id": "3",
@@ -12,12 +13,22 @@
     },
     {
       "id": "4",
-      "name": "Be happy",
-      "completed": false
+      "name": "Be very very happy",
+      "completed": true
     },
     {
       "id": "8129",
       "name": "Eat very well",
+      "completed": false
+    },
+    {
+      "id": "a839",
+      "name": "Life is GOOD",
+      "completed": false
+    },
+    {
+      "id": "75bc",
+      "name": "Yohoo",
       "completed": false
     }
   ]
