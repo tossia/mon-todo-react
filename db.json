@@ -1,38 +1,23 @@
 {
   "tasks": [
     {
-      "id": "1",
-      "name": "Eat",
-      "completed": false
-    },
-    {
       "id": "2",
       "name": "Sleep",
-      "completed": false
+      "completed": true
     },
     {
       "id": "3",
-      "name": "Repeat",
-      "completed": false
-    },
-    {
-      "id": "3727",
       "name": "Earn one million of euro",
-      "completed": false
+      "completed": true
     },
     {
-      "id": "8c60",
+      "id": "4",
       "name": "Be happy",
       "completed": false
     },
     {
-      "id": "028b",
-      "name": "Be healthy",
-      "completed": false
-    },
-    {
-      "id": "16b5",
-      "name": "Do something",
+      "id": "8129",
+      "name": "Eat very well",
       "completed": false
     }
   ]
