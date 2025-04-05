@@ -3,15 +3,17 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.jsx'
 
-const DATA = [
-  { id: "todo-0", name: "Eat", completed: true },
-  { id: "todo-1", name: "Sleep", completed: false },
-  { id: "todo-2", name: "Repeat", completed: false },
-];
+import axios from 'axios';
 
-
-createRoot(document.getElementById('root')).render(
-  <StrictMode>
-    <App tasks={DATA} />
-  </StrictMode>,
-)
+axios.get('http://localhost:5000/tasks')
+  .then(response => {
+    const tasks = response.data.tasks;
+    createRoot(document.getElementById('root')).render(
+      <StrictMode>
+        <App tasks={tasks} />
+      </StrictMode>,
+    )
+  })
+  .catch(error => {
+    console.error(error);
+  });

@@ -1,8 +1,9 @@
 import Form from "./components/Form";
 import FilterButton from "./components/FilterButton";
 import Todo from "./components/Todo";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, } from "react";
 import { nanoid } from 'nanoid';
+import axios from "axios";
 
 function usePrevious(value) {
   const ref = useRef(null);
@@ -21,6 +22,7 @@ const FILTER_MAP = {
 const FILTER_NAMES = Object.keys(FILTER_MAP);
 
 
+
 /**
  * A todo list application.
  *
@@ -30,10 +32,27 @@ const FILTER_NAMES = Object.keys(FILTER_MAP);
  */
 
 function App(props) {
-  const [tasks, setTasks] = useState(props.tasks);
+  const [tasks, setTasks] = useState([]);
   const [filter, setFilter] = useState(props.filter);
 
+  useEffect(() => {
+    axios
+      .get('http://localhost:5000/tasks')
+      .then((res) => {
+        setTasks(res.data)
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+  }, []);
 
+
+  /**
+   * Toggles the completion status of a task with the given `id`.
+   *
+   * @param {string} id - The id of the task to toggle.
+   * @returns {undefined}
+   */
   function toggleTaskCompleted(id) {
     const updatedTasks = tasks.map((task) => {
       if (id === task.id) {
@@ -43,6 +62,13 @@ function App(props) {
     });
     setTasks(updatedTasks);
   }
+
+  /**
+   * Deletes a task with the given `id` from the task list.
+   *
+   * @param {string} id - The id of the task to delete.
+   * @returns {undefined}
+   */
 
   function deleteTask(id) {
     const remainingTasks = tasks.filter((task) => id !== task.id);
@@ -73,18 +99,33 @@ function App(props) {
     />
   ));
 
+  /**
+   * Adds a new task with the given `name` to the task list.
+   *
+   * @param {string} name - The name of the task to add.
+   * @returns {undefined}
+   */
   function addTask(name) {
     if (name != "") {
-      const newTask = { id: `todo-${nanoid()}`, name, completed: false };
+      const newTask = { id: `${nanoid()}`, name, completed: false };
       setTasks([...tasks, newTask]);
     }
   }
-
+  console.log("tasks => ", tasks);
+  console.log("taskList => ", taskList);
   const tasksNoun = taskList.length !== 1 ? "tasks" : "task";
   const headingText = `${taskList.length} ${tasksNoun} remaining`;
 
   const listHeadingRef = useRef(null);
   const prevTaskLength = usePrevious(tasks.length);
+
+  /**
+   * Edits the name of a task with the given `id`.
+   *
+   * @param {string} id - The id of the task to edit.
+   * @param {string} newName - The new name for the task.
+   * @returns {undefined}
+   */
 
   function editTask(id, newName) {
     const editedTaskList = tasks.map((task) => {
@@ -95,7 +136,7 @@ function App(props) {
     });
     setTasks(editedTaskList);
   }
-  
+
   useEffect(() => {
     if (tasks.length < prevTaskLength) {
       listHeadingRef.current.focus();
