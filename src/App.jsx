@@ -75,7 +75,7 @@ function App(props) {
     setTasks(remainingTasks);
   }
 
-  const taskList = tasks
+  const taskList = Array.isArray(tasks) ? tasks
     ?.filter(FILTER_MAP[filter] || (() => true))
     .map((task) => (
       <Todo
@@ -87,8 +87,7 @@ function App(props) {
         deleteTask={deleteTask}
         editTask={editTask}
       />
-    ));
-
+    )) : [];
 
   const filterList = FILTER_NAMES.map((name) => (
     <FilterButton
@@ -107,12 +106,19 @@ function App(props) {
    */
   function addTask(name) {
     if (name != "") {
-      const newTask = { id: `${nanoid()}`, name, completed: false };
-      setTasks([...tasks, newTask]);
+      const newTask = { name, completed: false };
+
+      axios
+        .post('http://localhost:5000/tasks', newTask)
+        .then((res) => setTasks(...tasks, res.data))
+        .catch((err) => {
+          console.log(err)
+        })
     }
   }
+
   console.log("tasks => ", tasks);
-  console.log("taskList => ", taskList);
+
   const tasksNoun = taskList.length !== 1 ? "tasks" : "task";
   const headingText = `${taskList.length} ${tasksNoun} remaining`;
 
@@ -146,7 +152,7 @@ function App(props) {
 
   return (
     <div className="todoapp stack-large">
-      <h1>TodoMatic</h1>
+      <h1>My TODO list</h1>
       <Form addTask={addTask} />
       <div className="filters btn-group stack-exception">
         {filterList}
