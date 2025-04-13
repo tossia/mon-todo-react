@@ -1,9 +1,12 @@
-import Form from "./components/Form";
-import FilterButton from "./components/FilterButton";
+import FilterButton from "./components/filters/FilterButton";
 import Todo from "./components/Todo";
 import { useState, useEffect, useRef, } from "react";
-import { nanoid } from 'nanoid';
+// import { nanoid } from 'nanoid';
 import axios from "axios";
+import TaskForm from "./components/TaskForm";
+import "./index.css";
+import PriorityList from "./components/PriorityList";
+// import { ErrorBoundary } from 'react-error-boundary';
 
 function usePrevious(value) {
   const ref = useRef(null);
@@ -20,7 +23,6 @@ const FILTER_MAP = {
 };
 
 const FILTER_NAMES = Object.keys(FILTER_MAP);
-
 
 
 /**
@@ -72,16 +74,7 @@ function App(props) {
    * @param {string} id - The id of the task to delete.
    * @returns {undefined}
    */
-
-
-  /**
-   * Deletes a task with the given `id` from the task list.
-   *
-   * @param {string} id - The id of the task to delete.
-   * @returns {undefined}
-   */
   const deleteTask = (id) => {
-    console.log(tasks)
     axios
       .delete(`http://localhost:5000/tasks/${id}`)
       .then((response) => {
@@ -105,6 +98,7 @@ function App(props) {
         id={task.id}
         name={task.name}
         completed={task.completed}
+        priority={task.priority}
         toggleTaskCompleted={toggleTaskCompleted}
         deleteTask={deleteTask}
         editTask={editTask}
@@ -128,7 +122,7 @@ function App(props) {
    */
   const addTask = (name) => {
     if (name != "") {
-      const newTask = { name, completed: false };
+      const newTask = { name, completed: false, priority: 0 };
 
       axios
         .post('http://localhost:5000/tasks', newTask)
@@ -153,9 +147,9 @@ function App(props) {
    * @returns {undefined}
    */
 
-  function editTask(id, newName) {
+  function editTask(id, newName, newPriority) {
     const task = tasks.find((task) => task.id === id);
-    const updatedTasks = { ...task, name: newName };
+    const updatedTasks = { ...task, name: newName, priority: newPriority };
 
     axios
       .put(`http://localhost:5000/tasks/${id}`, updatedTasks)
@@ -176,18 +170,20 @@ function App(props) {
   return (
     <div className="todoapp stack-large">
       <h1>My TODO list</h1>
-      <Form addTask={addTask} />
-      <div className="filters btn-group stack-exception">
-        {filterList}
-      </div>
-      <h2 id="list-heading" tabIndex="-1" ref={listHeadingRef}>{headingText}</h2>
+      <div>
+        <div className=""><TaskForm addTask={addTask} /> </div>
+        <div className="filters btn_group stack-exception">
+          {filterList}
+        </div>
+        <h2 id="list-heading" tabIndex="-1" ref={listHeadingRef}>{headingText}</h2>
 
-      <ul
-        role="list"
-        className="todo-list stack-large stack-exception"
-        aria-labelledby="list-heading">
-        {taskList}
-      </ul>
+        <ul
+          role="list"
+          className="todo-list stack-large stack-exception"
+          aria-labelledby="list-heading">
+          {taskList}
+        </ul>
+      </div>
     </div>
   );
 }

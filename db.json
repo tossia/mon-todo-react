@@ -1,35 +1,22 @@
 {
   "tasks": [
     {
-      "id": "2",
-      "name": "Sleep weel",
-      "completed": true,
-      "newName": "Sleep well "
-    },
-    {
-      "id": "3",
-      "name": "Earn one million of euro",
-      "completed": true
-    },
-    {
-      "id": "4",
-      "name": "Be very very happy",
-      "completed": true
-    },
-    {
-      "id": "8129",
-      "name": "Eat very well",
-      "completed": false
-    },
-    {
       "id": "a839",
-      "name": "Life is GOOD",
-      "completed": false
+      "name": "Name",
+      "completed": false,
+      "priority": "Low"
     },
     {
-      "id": "75bc",
-      "name": "Yohoo",
-      "completed": false
+      "id": "1975",
+      "name": "Name High",
+      "completed": true,
+      "priority": "High"
+    },
+    {
+      "id": "aaea",
+      "name": "Eat well",
+      "completed": false,
+      "priority": 0
     }
   ]
 }
