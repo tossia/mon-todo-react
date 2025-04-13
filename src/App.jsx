@@ -1,12 +1,17 @@
 import FilterButton from "./components/filters/FilterButton";
+import FilterPrioButton from "./components/filters/FiltrePrioButton";
 import Todo from "./components/Todo";
-import { useState, useEffect, useRef, } from "react";
+import { useState, useEffect, useRef, useContext } from "react";
 // import { nanoid } from 'nanoid';
 import axios from "axios";
 import TaskForm from "./components/TaskForm";
 import "./index.css";
-import PriorityList from "./components/PriorityList";
+import { priorityValues } from './constants';
+import { ThemeProvider, ThemeContext } from './Theme.jsx';
+import Header from "./components/shared/Header.jsx";
 // import { ErrorBoundary } from 'react-error-boundary';
+
+
 
 function usePrevious(value) {
   const ref = useRef(null);
@@ -24,6 +29,16 @@ const FILTER_MAP = {
 
 const FILTER_NAMES = Object.keys(FILTER_MAP);
 
+const FILTER_PRIO_MAP = {
+  All: () => true,
+  High: (task) => task.priority === "High",
+  Medium: (task) => task.priority === "Medium",
+  Low: (task) => task.priority === "Low",
+  "Non défini": (task) => task.priority === "",
+};
+
+const FILTER_PRIO_NAMES = Object.keys(FILTER_PRIO_MAP);
+
 
 /**
  * A todo list application.
@@ -34,8 +49,13 @@ const FILTER_NAMES = Object.keys(FILTER_MAP);
  */
 
 function App(props) {
+
+  const { theme } = useContext(ThemeContext);
+
   const [tasks, setTasks] = useState([]);
-  const [filter, setFilter] = useState(props.filter);
+  const [filter, setFilter] = useState(props.filter || 'All');
+  const [filterPrio, setFilterPrio] = useState(props.filterPrio || 'All');
+
 
   useEffect(() => {
     axios
@@ -47,7 +67,6 @@ function App(props) {
         console.log(err)
       })
   }, []);
-
 
   /**
    * Toggles the completion status of a task with the given `id`.
@@ -90,7 +109,8 @@ function App(props) {
   };
 
   const taskList = Array.isArray(tasks) ? tasks
-    ?.filter(FILTER_MAP[filter] || (() => true))
+    ?.filter(FILTER_MAP[filter])
+    .filter(FILTER_PRIO_MAP[filterPrio])
     .map((task) => (
       <Todo
         key={task.id}
@@ -114,15 +134,25 @@ function App(props) {
     />
   ));
 
+  const filterPrioList = FILTER_PRIO_NAMES.map((name) => (
+    <FilterPrioButton
+      key={name}
+      priority={name}
+      color={priorityValues.find((p) => p.value === name)?.color}
+      isPressed={filterPrio === name}
+      setFilter={setFilterPrio}
+    />
+  ));
+
   /**
    * Adds a new task with the given `name` to the task list.
    *
    * @param {string} name - The name of the task to add.
    * @returns {undefined}
    */
-  const addTask = (name) => {
+  const addTask = (name, priority) => {
     if (name != "") {
-      const newTask = { name, completed: false, priority: 0 };
+      const newTask = { name, completed: false, priority };
 
       axios
         .post('http://localhost:5000/tasks', newTask)
@@ -136,8 +166,13 @@ function App(props) {
   const tasksNoun = taskList.length !== 1 ? "tasks" : "task";
   const headingText = `${taskList.length} ${tasksNoun} remaining`;
 
+  const prioHeadingText = `${taskList.length} ${tasksNoun} ${filterPrio} priority`;
+
   const listHeadingRef = useRef(null);
   const prevTaskLength = usePrevious(tasks.length);
+
+  const prioHeadingRef = useRef(null);
+  const prevPrioLength = usePrevious(tasks.length);
 
   /**
    * Edits the name of a task with the given `id`.
@@ -166,20 +201,32 @@ function App(props) {
     }
   }, [tasks.length, prevTaskLength]);
 
+  useEffect(() => {
+    if (tasks.length < prevPrioLength) {
+      prioHeadingRef.current.focus();
+    }
+  }, [tasks.length, prevPrioLength]);
+
 
   return (
-    <div className="todoapp stack-large">
+    <div className={`App ${theme}`}>
+      <Header />
       <h1>My TODO list</h1>
-      <div>
-        <div className=""><TaskForm addTask={addTask} /> </div>
+
+      <div className="App">
+        <div><TaskForm addTask={addTask} /> </div>
         <div className="filters btn_group stack-exception">
           {filterList}
         </div>
         <h2 id="list-heading" tabIndex="-1" ref={listHeadingRef}>{headingText}</h2>
 
+        <div className="filters btn_group stack-exception">
+          {filterPrioList}
+        </div>
+        <h2 id="list-heading" tabIndex="-1" ref={prioHeadingRef}>{prioHeadingText}</h2>
         <ul
           role="list"
-          className="todo-list stack-large stack-exception"
+          className="todo-list stack-large stack-exception App"
           aria-labelledby="list-heading">
           {taskList}
         </ul>

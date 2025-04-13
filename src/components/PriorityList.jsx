@@ -13,6 +13,7 @@ import { priorityValues } from '../constants';
 const PriorityList = ({ value, onChange }) => (
 
     <select className="selecte-priority" value={value} onChange={onChange}>
+        <option value="">Select Priority</option>
         {priorityValues.map((priority) => (
             <option key={priority.value} value={priority.value} style={{ color: priority.color }}>
                 {priority.label}

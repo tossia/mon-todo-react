@@ -2,7 +2,7 @@
   "tasks": [
     {
       "id": "a839",
-      "name": "Name",
+      "name": "Name something",
       "completed": false,
       "priority": "Low"
     },
@@ -16,7 +16,31 @@
       "id": "aaea",
       "name": "Eat well",
       "completed": false,
-      "priority": 0
+      "priority": "Medium"
+    },
+    {
+      "id": "5334",
+      "name": "high priority task",
+      "completed": false,
+      "priority": "High"
+    },
+    {
+      "id": "091c",
+      "name": "new task",
+      "completed": true,
+      "priority": "Medium"
+    },
+    {
+      "id": "f629",
+      "name": "new task sans prio",
+      "completed": false,
+      "priority": "High"
+    },
+    {
+      "id": "bffd",
+      "name": "new task",
+      "completed": false,
+      "priority": "High"
     }
   ]
 }

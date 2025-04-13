@@ -56,8 +56,15 @@ function Todo(props) {
      * @param {object} et - The event object from the select change event.
      * @returns {undefined}
      */
-    const handlePriorityChange = (e) => {
-        setPriority(e.target.value);
+    const handlePriorityChange = (event) => {
+        const selectedValue = event.target.value;
+        console.log('Selected value:', selectedValue);
+        const priorityObject = priorityValues.find((priority) => priority.value === selectedValue);
+        if (priorityObject) {
+            setPriority(priorityObject.value);
+        } else {
+            console.error("Invalid priority value");
+        }
     };
 
 
